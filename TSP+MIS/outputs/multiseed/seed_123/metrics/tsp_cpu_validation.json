@@ -1,0 +1,86 @@
+{
+  "after_distillation": {
+    "local_2opt": {
+      "length_mean": 2.7787247423607395,
+      "length_std": 0.6326887515033249,
+      "optimality_gap_mean": 0.006744171434810245,
+      "within_1pct_rate": 0.84375
+    },
+    "optimal": {
+      "length_mean": 2.7579083679542875,
+      "length_std": 0.6151635001103495,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    },
+    "random_restart": {
+      "length_mean": 2.7579083679542875,
+      "length_std": 0.6151635001103495,
+      "median_queries_to_within_1pct": 1.0,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    },
+    "reference_model": {
+      "length_mean": 3.408897348160005,
+      "length_std": 0.821029718087599,
+      "optimality_gap_mean": 0.23698704425106015,
+      "within_1pct_rate": 0.00625
+    },
+    "ucb_restart": {
+      "length_mean": 2.7579083679542875,
+      "length_std": 0.6151635001103495,
+      "median_queries_to_within_1pct": 1.0,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    }
+  },
+  "before_distillation": {
+    "local_2opt": {
+      "length_mean": 2.772506767120068,
+      "length_std": 0.625150801133527,
+      "optimality_gap_mean": 0.004826539451023133,
+      "within_1pct_rate": 0.86875
+    },
+    "optimal": {
+      "length_mean": 2.7579083679542875,
+      "length_std": 0.6151635001103495,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    },
+    "random_restart": {
+      "length_mean": 2.7579083679542875,
+      "length_std": 0.6151635001103495,
+      "median_queries_to_within_1pct": 1.0,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    },
+    "reference_model": {
+      "length_mean": 3.518488765039635,
+      "length_std": 0.8675629466495764,
+      "optimality_gap_mean": 0.2768426335458803,
+      "within_1pct_rate": 0.0
+    },
+    "ucb_restart": {
+      "length_mean": 2.7579083679542875,
+      "length_std": 0.6151635001103495,
+      "median_queries_to_within_1pct": 1.0,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    }
+  },
+  "context_representation": "upper_triangle_edge_distances",
+  "cost": {
+    "distill_budget": 12,
+    "exact_label_seconds": 8.08939098600058,
+    "post_eval_seconds": 34.24690156200086,
+    "pre_eval_seconds": 34.86338806799904,
+    "restart_budget": 32,
+    "total_seconds": 128.01140860600026
+  },
+  "distill_length_improvement_mean": 0.33519883118577865,
+  "finetune_final_bce": 0.025660638588028837,
+  "nodes": 12,
+  "pretrain_final_bce": 0.004952175869729281,
+  "problem": "euclidean_tsp",
+  "test_graphs": 160,
+  "train_graphs": 1000
+}

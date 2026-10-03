@@ -1,0 +1,12 @@
+{
+  "setting": "B", "seed": 7, "bounds": [[-4.0, 4.0], [-3.0, 3.0]],
+  "mu_a": [-1.5, 0.0], "mu_b": [1.5, 0.0], "sigma_a": 0.55, "sigma_b": 0.55,
+  "ref_weights": [1.0, 0.0], "tau_a": 0.45, "tau_b": 0.45,
+  "r_a": 1.0, "r_b": "auto", "beta": 1.0, "target_b_mass": 0.35,
+  "grid_size": 181, "basin_radius": 1.0,
+  "langevin": {"step_size": 0.018, "steps": 300, "burn_in": 100, "chains": 64},
+  "restart": {"rows": 8, "cols": 10, "ucb_c": 1.4, "novelty_gamma": 0.25},
+  "reward_train": {"samples": 6000, "steps": 2200, "batch_size": 128, "lr": 0.002},
+  "score_train": {"samples": 18000, "steps": 4000, "batch_size": 256, "lr": 0.001, "diffusion_steps": 100},
+  "experiment": {"seeds": [3, 7, 11, 19, 23], "lambdas": [0.0, 0.05, 0.1, 0.2, 0.4], "sample_count": 4000}
+}

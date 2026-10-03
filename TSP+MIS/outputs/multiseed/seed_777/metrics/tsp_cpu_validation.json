@@ -1,0 +1,86 @@
+{
+  "after_distillation": {
+    "local_2opt": {
+      "length_mean": 2.7917442366837815,
+      "length_std": 0.6300729280791597,
+      "optimality_gap_mean": 0.005638185325170655,
+      "within_1pct_rate": 0.85
+    },
+    "optimal": {
+      "length_mean": 2.775043564076376,
+      "length_std": 0.6205009010719645,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    },
+    "random_restart": {
+      "length_mean": 2.7750513371841365,
+      "length_std": 0.6204886028052564,
+      "median_queries_to_within_1pct": 1.0,
+      "optimality_gap_mean": 4.335962770101622e-06,
+      "within_1pct_rate": 1.0
+    },
+    "reference_model": {
+      "length_mean": 3.463250397366174,
+      "length_std": 0.8497740754856066,
+      "optimality_gap_mean": 0.24793460159308206,
+      "within_1pct_rate": 0.00625
+    },
+    "ucb_restart": {
+      "length_mean": 2.775043564076376,
+      "length_std": 0.6205009010719645,
+      "median_queries_to_within_1pct": 1.0,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    }
+  },
+  "before_distillation": {
+    "local_2opt": {
+      "length_mean": 2.7940881164319356,
+      "length_std": 0.6326850525655461,
+      "optimality_gap_mean": 0.006377409768857059,
+      "within_1pct_rate": 0.83125
+    },
+    "optimal": {
+      "length_mean": 2.775043564076376,
+      "length_std": 0.6205009010719645,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    },
+    "random_restart": {
+      "length_mean": 2.775043564076376,
+      "length_std": 0.6205009010719645,
+      "median_queries_to_within_1pct": 1.0,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    },
+    "reference_model": {
+      "length_mean": 3.5123701592403505,
+      "length_std": 0.8673730576909533,
+      "optimality_gap_mean": 0.26735739255055097,
+      "within_1pct_rate": 0.00625
+    },
+    "ucb_restart": {
+      "length_mean": 2.775043564076376,
+      "length_std": 0.6205009010719645,
+      "median_queries_to_within_1pct": 1.0,
+      "optimality_gap_mean": 0.0,
+      "within_1pct_rate": 1.0
+    }
+  },
+  "context_representation": "upper_triangle_edge_distances",
+  "cost": {
+    "distill_budget": 12,
+    "exact_label_seconds": 7.860884423000243,
+    "post_eval_seconds": 34.64865666800142,
+    "pre_eval_seconds": 34.15684730800058,
+    "restart_budget": 32,
+    "total_seconds": 126.68471635499918
+  },
+  "distill_length_improvement_mean": 0.3333510901422818,
+  "finetune_final_bce": 0.026293147096640924,
+  "nodes": 12,
+  "pretrain_final_bce": 0.003880608689259144,
+  "problem": "euclidean_tsp",
+  "test_graphs": 160,
+  "train_graphs": 1000
+}

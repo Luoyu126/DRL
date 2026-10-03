@@ -1,0 +1,16 @@
+{
+  "seed": 42,
+  "mis": {
+    "nodes": 18, "edge_probability": 0.22,
+    "train_graphs": 800, "test_graphs": 160,
+    "train_steps": 2800, "finetune_steps": 1400,
+    "batch_size": 128, "lr": 0.0015,
+    "samples_per_graph": 8, "restart_budget": 32, "distill_budget": 12
+  },
+  "tsp": {
+    "nodes": 12, "train_graphs": 1000, "test_graphs": 160,
+    "train_steps": 3200, "finetune_steps": 1600,
+    "batch_size": 128, "lr": 0.0015,
+    "samples_per_graph": 8, "restart_budget": 32, "distill_budget": 12
+  }
+}

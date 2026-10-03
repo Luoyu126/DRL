@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>双高斯密度 · Toy Setting</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111f;
+      --panel: rgba(15, 29, 48, 0.82);
+      --line: rgba(157, 184, 215, 0.18);
+      --text: #e8f0fa;
+      --muted: #91a5bd;
+      --cyan: #5ce1e6;
+      --orange: #ffb45c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(32, 112, 140, 0.20), transparent 32rem),
+        radial-gradient(circle at 88% 82%, rgba(177, 90, 47, 0.14), transparent 35rem),
+        var(--bg);
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 40px;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 48px);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .intro {
+      max-width: 800px;
+      margin: 13px 0 25px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px 22px;
+      padding: 14px 17px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(8, 17, 31, 0.58);
+      backdrop-filter: blur(10px);
+    }
+
+    .control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 210px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .control strong {
+      min-width: 46px;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] { accent-color: var(--cyan); width: 125px; }
+
+    button {
+      padding: 8px 13px;
+      border: 1px solid rgba(134, 169, 204, 0.28);
+      border-radius: 9px;
+      color: var(--text);
+      background: rgba(31, 52, 76, 0.72);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: rgba(92, 225, 230, 0.7); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: 0 20px 55px rgba(0, 0, 0, 0.22);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 17px 18px 5px;
+    }
+
+    .card h2 { margin: 0; font-size: 15px; }
+    .card .hint { color: var(--muted); font-size: 12px; }
+    canvas { display: block; width: 100%; height: 430px; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 0 18px 17px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 6px;
+      border-radius: 50%;
+    }
+
+    .explain {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .note {
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--muted);
+      background: rgba(11, 23, 39, 0.62);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .note b { color: var(--text); }
+    code { color: #b6eced; }
+
+    .single-step {
+      margin-top: 18px;
+      border: 1px solid rgba(117, 243, 245, 0.22);
+    }
+
+    .step-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(280px, 0.82fr);
+      gap: 0;
+    }
+
+    #singleStep { height: 420px; }
+
+    .step-panel {
+      padding: 18px;
+      border-left: 1px solid var(--line);
+      background: rgba(7, 16, 29, 0.42);
+    }
+
+    .step-actions { display: flex; gap: 9px; margin-bottom: 15px; }
+    .step-actions button:first-child { background: rgba(27, 116, 123, 0.62); }
+
+    .stage-list {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .stage-row {
+      padding: 8px 10px;
+      border-left: 2px solid rgba(145, 165, 189, 0.18);
+      color: rgba(145, 165, 189, 0.55);
+      font-size: 12px;
+      transition: 180ms ease;
+    }
+
+    .stage-row.done { color: var(--muted); border-color: rgba(117, 243, 245, 0.35); }
+    .stage-row.active {
+      color: var(--text);
+      border-color: var(--cyan);
+      background: rgba(92, 225, 230, 0.07);
+    }
+
+    .calculation {
+      min-height: 120px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: #cfe0f1;
+      background: rgba(3, 10, 19, 0.56);
+      font: 12px/1.75 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: normal;
+    }
+
+    .calculation .focus { color: #d8a6ff; font-weight: 700; }
+
+    @media (max-width: 820px) {
+      .grid, .explain, .step-layout { grid-template-columns: 1fr; }
+      .step-panel { border-left: 0; border-top: 1px solid var(--line); }
+      canvas { height: 380px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">Score function · Step 1 · DSM</p>
+    <h1>让模型从噪声中学会箭头</h1>
+    <p class="intro">
+      解析 score 已经被遮住。小型 MLP 只看到 clean sample <code>x₀</code>、加噪样本
+      <code>x̃ = x₀ + σₙε</code>，并用 DSM target <code>(x₀-x̃)/σₙ²</code> 在线学习向量场。
+    </p>
+
+    <section class="controls" aria-label="动画控制">
+      <label class="control">
+        左峰权重 <strong id="weightLabel">70%</strong>
+        <input id="weight" type="range" min="10" max="90" value="70" step="1" />
+      </label>
+      <label class="control">
+        峰宽 σ <strong id="sigmaLabel">0.60</strong>
+        <input id="sigma" type="range" min="35" max="100" value="60" step="1" />
+      </label>
+      <label class="control">
+        噪声 σₙ <strong id="noiseLabel">0.55</strong>
+        <input id="noise" type="range" min="20" max="120" value="55" step="5" />
+      </label>
+      <button id="trainToggle" type="button">暂停 DSM</button>
+      <button id="resetModel" type="button">重置模型</button>
+      <button id="pause" type="button">暂停采样动画</button>
+      <button id="clear" type="button">清空样本</button>
+      <button id="scoreToggle" type="button">揭晓解析答案</button>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="card-head">
+          <h2>Density landscape</h2>
+          <span class="hint">高度 = p(x)</span>
+        </div>
+        <canvas id="surface" aria-label="双高斯概率密度的三维山形图"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background: var(--cyan)"></i>Gaussian A</span>
+          <span><i class="dot" style="background: var(--orange)"></i>Gaussian B</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h2>DSM learned score</h2>
+          <span class="hint">step <span id="stepLabel">0</span> · loss <span id="lossLabel">—</span></span>
+        </div>
+        <canvas id="density" aria-label="双高斯概率密度热力图和随机样本"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background:white"></i>clean x₀</span>
+          <span><i class="dot" style="background:#d8a6ff"></i>noisy x̃ + conditional target</span>
+          <span style="color:#75f3f5">→ MLP 学到的 score</span>
+          <span style="color:#ffbd76">→ 解析 noisy score（默认隐藏）</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="explain">
+      <div class="note"><b>一条监督信号：</b>紫点是 <code>x̃</code>，白点是它对应的 <code>x₀</code>。连线方向就是 conditional score <code>(x₀-x̃)/σₙ²</code>。</div>
+      <div class="note"><b>为什么杂乱仍能学习：</b>同一个 noisy 位置可能对应不同 clean 样本。平方损失让 MLP 学到这些条件箭头的平均值，它恰好等于 <code>∇ log p<sub>σₙ</sub>(x̃)</code>。</div>
+      <div class="note"><b>注意目标被平滑：</b>固定非零 <code>σₙ</code> 时，DSM 学到的是加噪后 density 的 score，不是原始 <code>p₀</code> 的 score。DDPM 会进一步学习所有噪声时间。</div>
+      <div class="note"><b>自己验证：</b>先看青色箭头从随机状态逐渐成形，再暂停 DSM，点击“揭晓解析答案”；橙色和青色越重合，学习越准确。</div>
+      <div class="note"><b>改变参数会重训：</b>调整峰权重、峰宽或噪声后模型自动清零，因为目标分布已经变化。</div>
+      <div class="note"><b>下一步：</b>把单一 <code>σₙ</code> 换成时间轴 <code>t</code>，让一个网络同时预测 <code>s(xₜ,t)</code>，就进入 DDPM 的训练视角。</div>
+    </section>
+
+    <section class="card single-step">
+      <div class="card-head">
+        <h2>一条 DSM 训练数据是怎样产生的？</h2>
+        <span class="hint">手动单步 · 不会自动前进</span>
+      </div>
+      <div class="step-layout">
+        <canvas id="singleStep" aria-label="单条 DSM 训练样本构造过程"></canvas>
+        <aside class="step-panel">
+          <div class="step-actions">
+            <button id="nextStep" type="button">开始：采样 x₀</button>
+            <button id="restartStep" type="button">换一个样本</button>
+          </div>
+          <div class="stage-list">
+            <div class="stage-row" data-stage="1">1 · 从数据分布采样 clean x₀</div>
+            <div class="stage-row" data-stage="2">2 · 独立采样 ε ~ N(0, I)</div>
+            <div class="stage-row" data-stage="3">3 · 前向加噪：xₜ = x₀ + σₙε</div>
+            <div class="stage-row" data-stage="4">4 · 构造 label：(x₀ − xₜ) / σₙ²</div>
+            <div class="stage-row" data-stage="5">5 · 比较 MLP 输出并形成 squared loss</div>
+          </div>
+          <div id="calculation" class="calculation">按“开始”生成一条具体训练数据。</div>
+        </aside>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:white"></i>clean x₀</span>
+        <span><i class="dot" style="background:#d8a6ff"></i>noisy xₜ</span>
+        <span style="color:#d8a6ff">→ DSM label 的方向（xₜ → x₀）</span>
+        <span style="color:#75f3f5">→ 当前 MLP prediction</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const surfaceCanvas = document.querySelector("#surface");
+      const densityCanvas = document.querySelector("#density");
+      const singleStepCanvas = document.querySelector("#singleStep");
+      const weightInput = document.querySelector("#weight");
+      const sigmaInput = document.querySelector("#sigma");
+      const noiseInput = document.querySelector("#noise");
+      const weightLabel = document.querySelector("#weightLabel");
+      const sigmaLabel = document.querySelector("#sigmaLabel");
+      const noiseLabel = document.querySelector("#noiseLabel");
+      const stepLabel = document.querySelector("#stepLabel");
+      const lossLabel = document.querySelector("#lossLabel");
+      const pauseButton = document.querySelector("#pause");
+      const clearButton = document.querySelector("#clear");
+      const scoreToggleButton = document.querySelector("#scoreToggle");
+      const trainToggleButton = document.querySelector("#trainToggle");
+      const resetModelButton = document.querySelector("#resetModel");
+      const nextStepButton = document.querySelector("#nextStep");
+      const restartStepButton = document.querySelector("#restartStep");
+      const calculation = document.querySelector("#calculation");
+      const stageRows = [...document.querySelectorAll(".stage-row")];
+
+      const state = {
+        weight: 0.70,
+        sigma: 0.60,
+        noiseSigma: 0.55,
+        paused: false,
+        training: true,
+        showScore: false,
+        samples: [],
+        pairs: [],
+        lastSampleAt: 0,
+        lastPairAt: 0,
+        startAt: performance.now()
+      };
+
+      const means = [
+        { x: -1.35, y: -0.35, color: [92, 225, 230] },
+        { x:  1.25, y:  0.45, color: [255, 180, 92] }
+      ];
+      const bounds = { minX: -3.2, maxX: 3.2, minY: -2.7, maxY: 2.7 };
+      const TAU = Math.PI * 2;
+      const singleStep = {
+        stage: 0,
+        clean: null,
+        epsilon: null,
+        noisy: null,
+        label: null,
+        transitionAt: 0
+      };
+
+      function componentDensity(x, y, mean) {
+        const s2 = state.sigma * state.sigma;
+        const dx = x - mean.x;
+        const dy = y - mean.y;
+        return Math.exp(-(dx * dx + dy * dy) / (2 * s2)) / (TAU * s2);
+      }
+
+      function density(x, y) {
+        return state.weight * componentDensity(x, y, means[0]) +
+          (1 - state.weight) * componentDensity(x, y, means[1]);
+      }
+
+      // Ground truth is used only by the optional reveal overlay. DSM never sees it.
+      function trueNoisyScore(x, y) {
+        const variance = state.sigma ** 2 + state.noiseSigma ** 2;
+        const gaussianAt = (mean) => {
+          const dx = x - mean.x;
+          const dy = y - mean.y;
+          return Math.exp(-(dx * dx + dy * dy) / (2 * variance)) / (TAU * variance);
+        };
+        const pa = state.weight * gaussianAt(means[0]);
+        const pb = (1 - state.weight) * gaussianAt(means[1]);
+        const p = Math.max(pa + pb, 1e-300);
+        return {
+          x: (pa * (means[0].x - x) + pb * (means[1].x - x)) / (p * variance),
+          y: (pa * (means[0].y - y) + pb * (means[1].y - y)) / (p * variance)
+        };
+      }
+
+      function maxDensity() {
+        return Math.max(state.weight, 1 - state.weight) / (TAU * state.sigma * state.sigma);
+      }
+
+      function gaussian() {
+        let u = 0;
+        let v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v);
+      }
+
+      function sampleClean() {
+        const component = Math.random() < state.weight ? 0 : 1;
+        return {
+          x: means[component].x + state.sigma * gaussian(),
+          y: means[component].y + state.sigma * gaussian(),
+          component
+        };
+      }
+
+      function addSample(now) {
+        const clean = sampleClean();
+        state.samples.push({ ...clean, born: now });
+        if (state.samples.length > 240) state.samples.shift();
+      }
+
+      const HIDDEN = 32;
+      let model;
+
+      function randomArray(length, scale = 0) {
+        return Float64Array.from({ length }, () => scale * gaussian());
+      }
+
+      function makeModel() {
+        const params = {
+          w1: randomArray(HIDDEN * 2, 0.34),
+          b1: randomArray(HIDDEN),
+          w2: randomArray(2 * HIDDEN, 0.16),
+          b2: randomArray(2)
+        };
+        const moments = {};
+        for (const [name, values] of Object.entries(params)) {
+          moments[name] = { m: randomArray(values.length), v: randomArray(values.length) };
+        }
+        return { params, moments, adamStep: 0, trainStep: 0, loss: null };
+      }
+
+      function modelForward(x, y) {
+        const inputX = x / 2.5;
+        const inputY = y / 2.5;
+        const h = new Float64Array(HIDDEN);
+        for (let j = 0; j < HIDDEN; j++) {
+          h[j] = Math.tanh(
+            model.params.w1[j * 2] * inputX +
+            model.params.w1[j * 2 + 1] * inputY + model.params.b1[j]
+          );
+        }
+        let outX = model.params.b2[0];
+        let outY = model.params.b2[1];
+        for (let j = 0; j < HIDDEN; j++) {
+          outX += model.params.w2[j] * h[j];
+          outY += model.params.w2[HIDDEN + j] * h[j];
+        }
+        return { x: outX, y: outY, h, inputX, inputY };
+      }
+
+      function adamUpdate(name, gradients, learningRate = 0.004) {
+        const values = model.params[name];
+        const moment = model.moments[name];
+        const beta1 = 0.9;
+        const beta2 = 0.999;
+        const correction1 = 1 - beta1 ** model.adamStep;
+        const correction2 = 1 - beta2 ** model.adamStep;
+        for (let i = 0; i < values.length; i++) {
+          const g = Math.max(-5, Math.min(5, gradients[i]));
+          moment.m[i] = beta1 * moment.m[i] + (1 - beta1) * g;
+          moment.v[i] = beta2 * moment.v[i] + (1 - beta2) * g * g;
+          const mHat = moment.m[i] / correction1;
+          const vHat = moment.v[i] / correction2;
+          values[i] -= learningRate * mHat / (Math.sqrt(vHat) + 1e-8);
+        }
+      }
+
+      function trainBatch(now, batchSize = 64) {
+        const grads = {
+          w1: randomArray(HIDDEN * 2),
+          b1: randomArray(HIDDEN),
+          w2: randomArray(2 * HIDDEN),
+          b2: randomArray(2)
+        };
+        let loss = 0;
+        let displayPair = null;
+        const noiseVariance = state.noiseSigma ** 2;
+
+        for (let n = 0; n < batchSize; n++) {
+          const clean = sampleClean();
+          const noisy = {
+            x: clean.x + state.noiseSigma * gaussian(),
+            y: clean.y + state.noiseSigma * gaussian()
+          };
+          const targetX = (clean.x - noisy.x) / noiseVariance;
+          const targetY = (clean.y - noisy.y) / noiseVariance;
+          const out = modelForward(noisy.x, noisy.y);
+          const deltaX = out.x - targetX;
+          const deltaY = out.y - targetY;
+          loss += 0.5 * (deltaX * deltaX + deltaY * deltaY);
+          grads.b2[0] += deltaX / batchSize;
+          grads.b2[1] += deltaY / batchSize;
+
+          for (let j = 0; j < HIDDEN; j++) {
+            grads.w2[j] += deltaX * out.h[j] / batchSize;
+            grads.w2[HIDDEN + j] += deltaY * out.h[j] / batchSize;
+            const dh = (model.params.w2[j] * deltaX +
+              model.params.w2[HIDDEN + j] * deltaY) * (1 - out.h[j] ** 2) / batchSize;
+            grads.w1[j * 2] += dh * out.inputX;
+            grads.w1[j * 2 + 1] += dh * out.inputY;
+            grads.b1[j] += dh;
+          }
+          if (n === 0) displayPair = { clean, noisy, born: now };
+        }
+
+        model.adamStep++;
+        for (const name of Object.keys(grads)) adamUpdate(name, grads[name]);
+        model.trainStep++;
+        const batchLoss = loss / batchSize;
+        model.loss = model.loss === null ? batchLoss : 0.96 * model.loss + 0.04 * batchLoss;
+        if (model.trainStep % 8 === 0 && displayPair) {
+          state.pairs.push(displayPair);
+          if (state.pairs.length > 10) state.pairs.shift();
+        }
+      }
+
+      function resetModel() {
+        model = makeModel();
+        state.pairs.length = 0;
+        state.showScore = false;
+        stepLabel.textContent = "0";
+        lossLabel.textContent = "—";
+        scoreToggleButton.textContent = "揭晓解析答案";
+      }
+
+      resetModel();
+
+      function vectorText(v) {
+        return `(${v.x >= 0 ? "+" : ""}${v.x.toFixed(3)}, ${v.y >= 0 ? "+" : ""}${v.y.toFixed(3)})`;
+      }
+
+      function updateSingleStepUI() {
+        for (const row of stageRows) {
+          const rowStage = Number(row.dataset.stage);
+          row.classList.toggle("done", rowStage < singleStep.stage);
+          row.classList.toggle("active", rowStage === singleStep.stage);
+        }
+
+        const sigma = state.noiseSigma;
+        if (singleStep.stage === 0) {
+          calculation.innerHTML = "按“开始”生成一条具体训练数据。";
+          nextStepButton.textContent = "开始：采样 x₀";
+        } else if (singleStep.stage === 1) {
+          calculation.innerHTML = `x₀ ~ p<sub>data</sub><br><span class="focus">x₀ = ${vectorText(singleStep.clean)}</span><br><br>目前只有一个真实数据点，还没有 label。`;
+          nextStepButton.textContent = "下一步：采样 ε";
+        } else if (singleStep.stage === 2) {
+          calculation.innerHTML = `x₀ = ${vectorText(singleStep.clean)}<br>ε ~ N(0, I)<br><span class="focus">ε = ${vectorText(singleStep.epsilon)}</span><br><br>ε 与 x₀ 独立。`;
+          nextStepButton.textContent = "下一步：构造 xₜ";
+        } else if (singleStep.stage === 3) {
+          calculation.innerHTML = `σₙ = ${sigma.toFixed(2)}<br>xₜ = x₀ + σₙ ε<br>= ${vectorText(singleStep.clean)} + ${sigma.toFixed(2)} × ${vectorText(singleStep.epsilon)}<br><span class="focus">xₜ = ${vectorText(singleStep.noisy)}</span>`;
+          nextStepButton.textContent = "下一步：构造 label";
+        } else if (singleStep.stage === 4) {
+          calculation.innerHTML = `label = ∇<sub>xₜ</sub> log q(xₜ|x₀)<br>= (x₀ − xₜ) / σₙ²<br>= −ε / σₙ<br><span class="focus">label = ${vectorText(singleStep.label)}</span><br><br>紫箭头严格从 xₜ 指向 x₀，只编码方向；label 的真实模长由上面的数值给出。除非 σₙ²=1，它的向量终点不等于 x₀。`;
+          nextStepButton.textContent = "下一步：形成 loss";
+        } else {
+          const prediction = modelForward(singleStep.noisy.x, singleStep.noisy.y);
+          const dx = prediction.x - singleStep.label.x;
+          const dy = prediction.y - singleStep.label.y;
+          const oneLoss = 0.5 * (dx * dx + dy * dy);
+          calculation.innerHTML = `MLP 输入：xₜ = ${vectorText(singleStep.noisy)}<br>MLP 输出：sθ(xₜ) = ${vectorText(prediction)}<br>监督 label：${vectorText(singleStep.label)}<br><span class="focus">L = ½‖sθ(xₜ) − label‖² = ${oneLoss.toFixed(4)}</span><br><br>反向传播只让这条 prediction 靠近 label。`;
+          nextStepButton.textContent = "再来一条";
+        }
+      }
+
+      function beginSingleStep() {
+        singleStep.stage = 1;
+        singleStep.clean = sampleClean();
+        singleStep.epsilon = null;
+        singleStep.noisy = null;
+        singleStep.label = null;
+        singleStep.transitionAt = 0;
+        updateSingleStepUI();
+      }
+
+      function resetSingleStep() {
+        singleStep.stage = 0;
+        singleStep.clean = null;
+        singleStep.epsilon = null;
+        singleStep.noisy = null;
+        singleStep.label = null;
+        updateSingleStepUI();
+      }
+
+      function advanceSingleStep() {
+        if (singleStep.stage === 0 || singleStep.stage === 5) {
+          beginSingleStep();
+          return;
+        }
+        if (singleStep.stage === 1) {
+          singleStep.epsilon = { x: gaussian(), y: gaussian() };
+          singleStep.stage = 2;
+        } else if (singleStep.stage === 2) {
+          singleStep.noisy = {
+            x: singleStep.clean.x + state.noiseSigma * singleStep.epsilon.x,
+            y: singleStep.clean.y + state.noiseSigma * singleStep.epsilon.y
+          };
+          singleStep.transitionAt = performance.now();
+          singleStep.stage = 3;
+        } else if (singleStep.stage === 3) {
+          const variance = state.noiseSigma ** 2;
+          singleStep.label = {
+            x: (singleStep.clean.x - singleStep.noisy.x) / variance,
+            y: (singleStep.clean.y - singleStep.noisy.y) / variance
+          };
+          singleStep.stage = 4;
+        } else if (singleStep.stage === 4) {
+          singleStep.stage = 5;
+        }
+        updateSingleStepUI();
+      }
+
+      function drawVectorFrom(ctx, start, vx, vy, strength, rgb, width) {
+        drawArrow(
+          ctx,
+          start.x + vx * 0.45,
+          start.y + vy * 0.45,
+          vx,
+          vy,
+          strength,
+          rgb,
+          width
+        );
+      }
+
+      function drawSingleStep(now) {
+        const { ctx, w, h } = setupCanvas(singleStepCanvas);
+        ctx.clearRect(0, 0, w, h);
+        const cols = Math.max(50, Math.round(w / 7));
+        const rows = Math.max(36, Math.round(h / 7));
+        const maxP = maxDensity();
+        for (let j = 0; j < rows; j++) {
+          const y = bounds.maxY - (bounds.maxY - bounds.minY) * (j + 0.5) / rows;
+          for (let i = 0; i < cols; i++) {
+            const x = bounds.minX + (bounds.maxX - bounds.minX) * (i + 0.5) / cols;
+            const t = density(x, y) / maxP;
+            ctx.fillStyle = mixColor(Math.pow(t, 0.48), 0.74);
+            ctx.fillRect(i * w / cols, j * h / rows, w / cols + 0.8, h / rows + 0.8);
+          }
+        }
+
+        ctx.strokeStyle = "rgba(210, 229, 240, 0.12)";
+        ctx.lineWidth = 1;
+        for (let i = 1; i < 6; i++) {
+          ctx.beginPath(); ctx.moveTo(i * w / 6, 0); ctx.lineTo(i * w / 6, h); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0, i * h / 6); ctx.lineTo(w, i * h / 6); ctx.stroke();
+        }
+
+        if (singleStep.stage === 0) {
+          ctx.fillStyle = "rgba(232, 240, 250, 0.78)";
+          ctx.font = "14px system-ui";
+          ctx.textAlign = "center";
+          ctx.fillText("右侧按“开始”，一次只走一步", w / 2, h / 2);
+          ctx.textAlign = "start";
+          return;
+        }
+
+        const clean = xyToCanvas(singleStep.clean.x, singleStep.clean.y, w, h);
+        ctx.beginPath();
+        ctx.arc(clean.x, clean.y, 6, 0, TAU);
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(8, 17, 31, 0.85)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = "white";
+        ctx.font = "bold 12px system-ui";
+        ctx.fillText("x₀", clean.x + 9, clean.y - 8);
+
+        if (singleStep.stage >= 3) {
+          const destination = xyToCanvas(singleStep.noisy.x, singleStep.noisy.y, w, h);
+          const rawProgress = Math.min(1, Math.max(0, (now - singleStep.transitionAt) / 900));
+          const progress = singleStep.stage > 3 ? 1 : 1 - (1 - rawProgress) ** 3;
+          const noisy = {
+            x: clean.x + (destination.x - clean.x) * progress,
+            y: clean.y + (destination.y - clean.y) * progress
+          };
+          ctx.save();
+          ctx.setLineDash([5, 5]);
+          ctx.strokeStyle = "rgba(216, 166, 255, 0.68)";
+          ctx.beginPath(); ctx.moveTo(clean.x, clean.y); ctx.lineTo(noisy.x, noisy.y); ctx.stroke();
+          ctx.restore();
+          ctx.beginPath();
+          ctx.arc(noisy.x, noisy.y, 6, 0, TAU);
+          ctx.fillStyle = "#d8a6ff";
+          ctx.fill();
+          ctx.strokeStyle = "rgba(8, 17, 31, 0.85)";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.fillStyle = "#efd8ff";
+          ctx.fillText("xₜ", noisy.x + 9, noisy.y - 8);
+
+          if (singleStep.stage >= 4) {
+            // Show the label direction exactly from x_t back to x_0. The true
+            // magnitude has the additional 1 / sigma_n^2 factor and is shown
+            // numerically in the calculation panel.
+            const vx = clean.x - destination.x;
+            const vy = clean.y - destination.y;
+            drawVectorFrom(ctx, destination, vx, vy, 1, "216, 166, 255", 2.5);
+            ctx.fillStyle = "#efd8ff";
+            ctx.fillText(
+              "label direction",
+              (destination.x + clean.x) / 2 + 7,
+              (destination.y + clean.y) / 2 - 7
+            );
+          }
+
+          if (singleStep.stage >= 5) {
+            const prediction = modelForward(singleStep.noisy.x, singleStep.noisy.y);
+            const magnitude = Math.hypot(prediction.x, prediction.y);
+            const length = Math.min(72, 18 + magnitude * 12);
+            const norm = Math.max(magnitude, 1e-9);
+            const vx = length * prediction.x / norm;
+            const vy = -length * prediction.y / norm;
+            drawVectorFrom(ctx, destination, vx, vy, 1, "117, 243, 245", 2.2);
+            ctx.fillStyle = "#a9fcfd";
+            ctx.fillText("sθ(xₜ)", destination.x + vx + 7, destination.y + vy + 12);
+          }
+        }
+      }
+
+      updateSingleStepUI();
+
+      function setupCanvas(canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const width = Math.max(1, Math.round(rect.width * dpr));
+        const height = Math.max(1, Math.round(rect.height * dpr));
+        if (canvas.width !== width || canvas.height !== height) {
+          canvas.width = width;
+          canvas.height = height;
+        }
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { ctx, w: rect.width, h: rect.height };
+      }
+
+      function mixColor(t, alpha = 1) {
+        const stops = [
+          [0.00, [8, 17, 31]],
+          [0.16, [17, 48, 71]],
+          [0.38, [26, 105, 119]],
+          [0.62, [76, 181, 167]],
+          [0.82, [245, 179, 88]],
+          [1.00, [255, 237, 170]]
+        ];
+        t = Math.max(0, Math.min(1, t));
+        let i = 1;
+        while (i < stops.length - 1 && t > stops[i][0]) i++;
+        const a = stops[i - 1];
+        const b = stops[i];
+        const q = (t - a[0]) / (b[0] - a[0]);
+        const rgb = a[1].map((v, j) => Math.round(v + (b[1][j] - v) * q));
+        return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+      }
+
+      function project(x, y, z, w, h, angle) {
+        const ca = Math.cos(angle);
+        const sa = Math.sin(angle);
+        const xr = x * ca - y * sa;
+        const yr = x * sa + y * ca;
+        const scale = Math.min(w / 7.6, h / 5.8);
+        return {
+          x: w * 0.50 + xr * scale,
+          y: h * 0.69 + yr * scale * 0.43 - z * h * 0.63
+        };
+      }
+
+      function drawSurface(now) {
+        const { ctx, w, h } = setupCanvas(surfaceCanvas);
+        ctx.clearRect(0, 0, w, h);
+        const angle = -0.72 + Math.sin((now - state.startAt) * 0.00018) * 0.10;
+        const gridN = 35;
+        const maxP = maxDensity();
+
+        const bg = ctx.createLinearGradient(0, 0, 0, h);
+        bg.addColorStop(0, "rgba(7, 15, 27, 0.10)");
+        bg.addColorStop(1, "rgba(3, 9, 17, 0.58)");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        for (let iy = gridN - 1; iy >= 0; iy--) {
+          const y0 = bounds.minY + (bounds.maxY - bounds.minY) * iy / gridN;
+          const y1 = bounds.minY + (bounds.maxY - bounds.minY) * (iy + 1) / gridN;
+          for (let ix = 0; ix < gridN; ix++) {
+            const x0 = bounds.minX + (bounds.maxX - bounds.minX) * ix / gridN;
+            const x1 = bounds.minX + (bounds.maxX - bounds.minX) * (ix + 1) / gridN;
+            const z00 = density(x0, y0) / maxP;
+            const z10 = density(x1, y0) / maxP;
+            const z11 = density(x1, y1) / maxP;
+            const z01 = density(x0, y1) / maxP;
+            const avg = (z00 + z10 + z11 + z01) / 4;
+            const p0 = project(x0, y0, z00, w, h, angle);
+            const p1 = project(x1, y0, z10, w, h, angle);
+            const p2 = project(x1, y1, z11, w, h, angle);
+            const p3 = project(x0, y1, z01, w, h, angle);
+            ctx.beginPath();
+            ctx.moveTo(p0.x, p0.y);
+            ctx.lineTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineTo(p3.x, p3.y);
+            ctx.closePath();
+            ctx.fillStyle = mixColor(Math.pow(avg, 0.55), 0.92);
+            ctx.fill();
+            ctx.strokeStyle = `rgba(157, 205, 218, ${0.025 + avg * 0.09})`;
+            ctx.lineWidth = 0.55;
+            ctx.stroke();
+          }
+        }
+
+        ctx.fillStyle = "rgba(218, 231, 245, 0.74)";
+        ctx.font = "12px system-ui";
+        const a = project(means[0].x, means[0].y, density(means[0].x, means[0].y) / maxP + 0.08, w, h, angle);
+        const b = project(means[1].x, means[1].y, density(means[1].x, means[1].y) / maxP + 0.08, w, h, angle);
+        ctx.fillText(`A · ${Math.round(state.weight * 100)}%`, a.x - 20, a.y);
+        ctx.fillText(`B · ${Math.round((1 - state.weight) * 100)}%`, b.x - 20, b.y);
+        ctx.fillStyle = "rgba(145, 165, 189, 0.68)";
+        ctx.fillText("x₁", w - 34, h - 23);
+        ctx.fillText("x₂", 18, h - 23);
+        ctx.fillText("p(x)", 18, 23);
+      }
+
+      function xyToCanvas(x, y, w, h) {
+        const pad = 30;
+        return {
+          x: pad + (x - bounds.minX) / (bounds.maxX - bounds.minX) * (w - 2 * pad),
+          y: h - pad - (y - bounds.minY) / (bounds.maxY - bounds.minY) * (h - 2 * pad)
+        };
+      }
+
+      function drawArrow(ctx, x, y, vx, vy, strength, rgb = "117, 243, 245", width = 1.25) {
+        const length = Math.hypot(vx, vy);
+        if (length < 0.8) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.7, 0, TAU);
+          ctx.fillStyle = `rgba(${rgb}, 0.82)`;
+          ctx.fill();
+          return;
+        }
+        const ux = vx / length;
+        const uy = vy / length;
+        const head = Math.min(4.2, length * 0.34);
+        ctx.strokeStyle = `rgba(${rgb}, ${0.52 + 0.34 * strength})`;
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.lineWidth = width;
+        ctx.beginPath();
+        ctx.moveTo(x - vx * 0.45, y - vy * 0.45);
+        ctx.lineTo(x + vx * 0.55, y + vy * 0.55);
+        ctx.stroke();
+        const tipX = x + vx * 0.55;
+        const tipY = y + vy * 0.55;
+        ctx.beginPath();
+        ctx.moveTo(tipX, tipY);
+        ctx.lineTo(tipX - ux * head - uy * head * 0.62, tipY - uy * head + ux * head * 0.62);
+        ctx.lineTo(tipX - ux * head + uy * head * 0.62, tipY - uy * head - ux * head * 0.62);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawScoreField(ctx, w, h, scorer, rgb, width) {
+        const nx = 11;
+        const ny = 9;
+        for (let j = 0; j < ny; j++) {
+          const y = bounds.minY + (bounds.maxY - bounds.minY) * (j + 0.5) / ny;
+          for (let i = 0; i < nx; i++) {
+            const x = bounds.minX + (bounds.maxX - bounds.minX) * (i + 0.5) / nx;
+            const s = scorer(x, y);
+            const magnitude = Math.hypot(s.x, s.y);
+            const strength = Math.tanh(magnitude / 3);
+            const arrowLength = 5 + 12 * strength;
+            const norm = Math.max(magnitude, 1e-9);
+            const p = xyToCanvas(x, y, w, h);
+            drawArrow(
+              ctx,
+              p.x,
+              p.y,
+              arrowLength * s.x / norm,
+              -arrowLength * s.y / norm,
+              strength,
+              rgb,
+              width
+            );
+          }
+        }
+      }
+
+      function drawDensity(now) {
+        const { ctx, w, h } = setupCanvas(densityCanvas);
+        ctx.clearRect(0, 0, w, h);
+        const cols = Math.max(64, Math.round(w / 5));
+        const rows = Math.max(55, Math.round(h / 5));
+        const cw = w / cols + 0.6;
+        const ch = h / rows + 0.6;
+        const maxP = maxDensity();
+
+        for (let j = 0; j < rows; j++) {
+          const y = bounds.maxY - (bounds.maxY - bounds.minY) * (j + 0.5) / rows;
+          for (let i = 0; i < cols; i++) {
+            const x = bounds.minX + (bounds.maxX - bounds.minX) * (i + 0.5) / cols;
+            const t = density(x, y) / maxP;
+            ctx.fillStyle = mixColor(Math.pow(t, 0.48));
+            ctx.fillRect(i * w / cols, j * h / rows, cw, ch);
+          }
+        }
+
+        ctx.strokeStyle = "rgba(210, 229, 240, 0.14)";
+        ctx.lineWidth = 1;
+        for (let i = 1; i < 6; i++) {
+          const x = i * w / 6;
+          const y = i * h / 6;
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+
+        drawScoreField(ctx, w, h, (x, y) => modelForward(x, y), "117, 243, 245", 1.55);
+        if (state.showScore) drawScoreField(ctx, w, h, trueNoisyScore, "255, 189, 118", 0.95);
+
+        for (const sample of state.samples) {
+          const p = xyToCanvas(sample.x, sample.y, w, h);
+          const age = now - sample.born;
+          const enter = Math.min(1, age / 380);
+          const radius = 2.4 + (1 - enter) * 7;
+          const color = means[sample.component].color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius, 0, TAU);
+          ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.30 + 0.65 * enter})`;
+          ctx.fill();
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.62 * enter})`;
+          ctx.lineWidth = 0.7;
+          ctx.stroke();
+        }
+
+        for (const pair of state.pairs) {
+          const clean = xyToCanvas(pair.clean.x, pair.clean.y, w, h);
+          const noisy = xyToCanvas(pair.noisy.x, pair.noisy.y, w, h);
+          const age = now - pair.born;
+          const alpha = Math.max(0.18, 1 - age / 6000);
+          const dx = clean.x - noisy.x;
+          const dy = clean.y - noisy.y;
+          const distance = Math.hypot(dx, dy);
+          const capped = Math.min(30, distance);
+          const norm = Math.max(distance, 1e-9);
+          drawVectorFrom(
+            ctx,
+            noisy,
+            capped * dx / norm,
+            capped * dy / norm,
+            alpha,
+            "216, 166, 255",
+            1.15
+          );
+          ctx.beginPath();
+          ctx.arc(clean.x, clean.y, 3.0, 0, TAU);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(noisy.x, noisy.y, 3.4, 0, TAU);
+          ctx.fillStyle = `rgba(216, 166, 255, ${alpha})`;
+          ctx.fill();
+        }
+
+        ctx.fillStyle = "rgba(232, 240, 250, 0.8)";
+        ctx.font = "12px system-ui";
+        ctx.fillText("x₂", 11, 18);
+        ctx.fillText("x₁", w - 25, h - 11);
+      }
+
+      function clearSamples() {
+        state.samples.length = 0;
+        state.pairs.length = 0;
+      }
+
+      weightInput.addEventListener("input", () => {
+        state.weight = Number(weightInput.value) / 100;
+        weightLabel.textContent = `${weightInput.value}%`;
+        clearSamples();
+        resetModel();
+        resetSingleStep();
+      });
+
+      sigmaInput.addEventListener("input", () => {
+        state.sigma = Number(sigmaInput.value) / 100;
+        sigmaLabel.textContent = state.sigma.toFixed(2);
+        clearSamples();
+        resetModel();
+        resetSingleStep();
+      });
+
+      noiseInput.addEventListener("input", () => {
+        state.noiseSigma = Number(noiseInput.value) / 100;
+        noiseLabel.textContent = state.noiseSigma.toFixed(2);
+        clearSamples();
+        resetModel();
+        resetSingleStep();
+      });
+
+      pauseButton.addEventListener("click", () => {
+        state.paused = !state.paused;
+        pauseButton.textContent = state.paused ? "继续采样动画" : "暂停采样动画";
+      });
+
+      clearButton.addEventListener("click", clearSamples);
+
+      scoreToggleButton.addEventListener("click", () => {
+        state.showScore = !state.showScore;
+        scoreToggleButton.textContent = state.showScore ? "再次遮住答案" : "揭晓解析答案";
+      });
+
+      trainToggleButton.addEventListener("click", () => {
+        state.training = !state.training;
+        trainToggleButton.textContent = state.training ? "暂停 DSM" : "继续 DSM";
+      });
+
+      resetModelButton.addEventListener("click", resetModel);
+      nextStepButton.addEventListener("click", advanceSingleStep);
+      restartStepButton.addEventListener("click", beginSingleStep);
+
+      function animate(now) {
+        if (!state.paused && now - state.lastSampleAt > 95) {
+          addSample(now);
+          state.lastSampleAt = now;
+        }
+        if (state.training) {
+          trainBatch(now);
+          trainBatch(now);
+          stepLabel.textContent = model.trainStep.toLocaleString();
+          lossLabel.textContent = model.loss === null ? "—" : model.loss.toFixed(3);
+        }
+        drawSurface(now);
+        drawDensity(now);
+        drawSingleStep(now);
+        requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+</html>

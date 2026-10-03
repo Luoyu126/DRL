@@ -1,0 +1,32 @@
+{
+  "setting": "C_multimodal",
+  "seed": 13,
+  "bounds": [[-5.0, 5.0], [-4.0, 4.0]],
+  "reference": {
+    "means": [[-2.6, 0.2], [0.0, 2.2], [2.7, 1.4], [2.8, -2.3]],
+    "sigmas": [0.58, 0.48, 0.42, 0.32],
+    "weights": [0.78, 0.15, 0.06, 0.01]
+  },
+  "reward_peaks": [
+    {"name": "home", "mu": [-2.6, 0.2], "tau": [0.55, 0.55], "height": "auto", "target_mass": 0.20, "radius": 0.85},
+    {"name": "broad", "mu": [1.5, -0.1], "tau": [0.75, 0.55], "height": "auto", "target_mass": 0.25, "radius": 0.95},
+    {"name": "needle", "mu": [0.1, -2.7], "tau": [0.22, 0.18], "height": "auto", "target_mass": 0.16, "radius": 0.42},
+    {"name": "boundary", "mu": [4.35, 2.9], "tau": [0.34, 0.42], "height": "auto", "target_mass": 0.14, "radius": 0.58}
+  ],
+  "reward_hazards": [
+    {"name": "central_valley", "mu": [-0.6, 0.0], "tau": [0.9, 0.7], "height": -3.0},
+    {"name": "top_right_hole", "mu": [3.2, 2.7], "tau": [0.55, 0.45], "height": -2.5}
+  ],
+  "beta": 1.0,
+  "grid_size": 201,
+  "langevin": {"step_size": 0.018, "steps": 260, "chains": 160},
+  "restart": {"rows": 8, "cols": 10, "ucb_c": 1.3, "novelty_gamma": 0.35},
+  "reward_train": {"samples": 9000, "steps": 2600, "batch_size": 192, "lr": 0.0015},
+  "score_train": {"samples": 22000, "steps": 4200, "batch_size": 256, "lr": 0.001, "diffusion_steps": 100},
+  "experiment": {
+    "seeds": [2, 5, 11, 17, 29],
+    "budgets": [20, 40, 80, 160],
+    "lambdas": [0.0, 0.1, 0.2, 0.4],
+    "sample_count": 5000
+  }
+}

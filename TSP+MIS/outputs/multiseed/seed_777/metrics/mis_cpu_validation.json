@@ -1,0 +1,86 @@
+{
+  "after_distillation": {
+    "local": {
+      "optimal_hit_rate": 0.56875,
+      "optimality_gap_mean": 0.0685152867965368,
+      "size_mean": 7.71875,
+      "size_std": 0.9693546500120583
+    },
+    "optimal": {
+      "optimal_hit_rate": 1.0,
+      "optimality_gap_mean": 0.0,
+      "size_mean": 8.30625,
+      "size_std": 0.8660028507458852
+    },
+    "random_restart": {
+      "median_queries_to_optimum": 1.0,
+      "optimal_hit_rate": 0.99375,
+      "optimality_gap_mean": 0.000625,
+      "size_mean": 8.3,
+      "size_std": 0.8573214099741123
+    },
+    "reference_model": {
+      "optimal_hit_rate": 0.5,
+      "optimality_gap_mean": 0.07936056998556998,
+      "size_mean": 7.64375,
+      "size_std": 1.0859723465632078
+    },
+    "ucb_restart": {
+      "median_queries_to_optimum": 1.0,
+      "optimal_hit_rate": 0.9875,
+      "optimality_gap_mean": 0.0013888888888888887,
+      "size_mean": 8.29375,
+      "size_std": 0.8631111964862929
+    }
+  },
+  "before_distillation": {
+    "local": {
+      "optimal_hit_rate": 0.6375,
+      "optimality_gap_mean": 0.052740800865800866,
+      "size_mean": 7.8625,
+      "size_std": 1.0092540562217227
+    },
+    "optimal": {
+      "optimal_hit_rate": 1.0,
+      "optimality_gap_mean": 0.0,
+      "size_mean": 8.30625,
+      "size_std": 0.8660028507458852
+    },
+    "random_restart": {
+      "median_queries_to_optimum": 1.0,
+      "optimal_hit_rate": 0.9875,
+      "optimality_gap_mean": 0.0013194444444444445,
+      "size_mean": 8.29375,
+      "size_std": 0.8558393175707694
+    },
+    "reference_model": {
+      "optimal_hit_rate": 0.33125,
+      "optimality_gap_mean": 0.13596590909090905,
+      "size_mean": 7.16875,
+      "size_std": 1.2001139268836105
+    },
+    "ucb_restart": {
+      "median_queries_to_optimum": 1.0,
+      "optimal_hit_rate": 1.0,
+      "optimality_gap_mean": 0.0,
+      "size_mean": 8.30625,
+      "size_std": 0.8660028507458852
+    }
+  },
+  "cost": {
+    "distill_budget": 12,
+    "exact_label_seconds": 0.035229244000220206,
+    "post_eval_seconds": 3.210473199000262,
+    "pre_eval_seconds": 3.0570801949997986,
+    "restart_budget": 32,
+    "total_seconds": 20.332619885000895
+  },
+  "distill_label_improvement_mean": 1.16375,
+  "edge_probability": 0.22,
+  "finetune_final_bce": 0.006140679715404066,
+  "nodes": 18,
+  "pretrain_final_bce": 5.62387496522028e-05,
+  "problem": "maximum_independent_set",
+  "test_graphs": 160,
+  "train_graphs": 800
+}

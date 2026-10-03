@@ -1,0 +1,86 @@
+{
+  "after_distillation": {
+    "local": {
+      "optimal_hit_rate": 0.55625,
+      "optimality_gap_mean": 0.06905032467532467,
+      "size_mean": 7.7875,
+      "size_std": 1.0451525008342084
+    },
+    "optimal": {
+      "optimal_hit_rate": 1.0,
+      "optimality_gap_mean": 0.0,
+      "size_mean": 8.375,
+      "size_std": 0.8642193008721802
+    },
+    "random_restart": {
+      "median_queries_to_optimum": 1.0,
+      "optimal_hit_rate": 0.99375,
+      "optimality_gap_mean": 0.0008928571428571428,
+      "size_mean": 8.36875,
+      "size_std": 0.8776522303851338
+    },
+    "reference_model": {
+      "optimal_hit_rate": 0.5375,
+      "optimality_gap_mean": 0.06591765873015873,
+      "size_mean": 7.81875,
+      "size_std": 1.0116315720162157
+    },
+    "ucb_restart": {
+      "median_queries_to_optimum": 1.0,
+      "optimal_hit_rate": 0.9875,
+      "optimality_gap_mean": 0.0014756944444444444,
+      "size_mean": 8.3625,
+      "size_std": 0.869536514471934
+    }
+  },
+  "before_distillation": {
+    "local": {
+      "optimal_hit_rate": 0.575,
+      "optimality_gap_mean": 0.057599431818181814,
+      "size_mean": 7.88125,
+      "size_std": 0.9176864592550117
+    },
+    "optimal": {
+      "optimal_hit_rate": 1.0,
+      "optimality_gap_mean": 0.0,
+      "size_mean": 8.375,
+      "size_std": 0.8642193008721802
+    },
+    "random_restart": {
+      "median_queries_to_optimum": 1.0,
+      "optimal_hit_rate": 1.0,
+      "optimality_gap_mean": 0.0,
+      "size_mean": 8.375,
+      "size_std": 0.8642193008721802
+    },
+    "reference_model": {
+      "optimal_hit_rate": 0.28125,
+      "optimality_gap_mean": 0.1341073683261183,
+      "size_mean": 7.24375,
+      "size_std": 1.1605326094082837
+    },
+    "ucb_restart": {
+      "median_queries_to_optimum": 1.0,
+      "optimal_hit_rate": 0.9875,
+      "optimality_gap_mean": 0.0016741071428571428,
+      "size_mean": 8.3625,
+      "size_std": 0.8837950837156767
+    }
+  },
+  "cost": {
+    "distill_budget": 12,
+    "exact_label_seconds": 0.03645673900064139,
+    "post_eval_seconds": 3.0925121959990065,
+    "pre_eval_seconds": 3.0562805400004436,
+    "restart_budget": 32,
+    "total_seconds": 18.824738191000506
+  },
+  "distill_label_improvement_mean": 1.13625,
+  "edge_probability": 0.22,
+  "finetune_final_bce": 0.006530986161091791,
+  "nodes": 18,
+  "pretrain_final_bce": 5.602289102486511e-05,
+  "problem": "maximum_independent_set",
+  "test_graphs": 160,
+  "train_graphs": 800
+}

@@ -1,0 +1,7 @@
+.venv/
+.matplotlib/
+__pycache__/
+*.pyc
+outputs/figures/*.png
+outputs/metrics/*.json
+outputs/models/*.pkl
