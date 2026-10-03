@@ -1,5 +1,7 @@
 # Reward-Guided Exploration for Generative Combinatorial Optimization
 
+> **Repository layout:** The `main` branch intentionally contains only this project overview. All source code, configurations, tests, subproject documentation, and versioned experiment artifacts are maintained on the [`develop` branch](https://github.com/Luoyu126/DRL/tree/develop). Please switch to `develop` before running or modifying the project.
+
 ## 1. 项目目标与当前研究路线
 
 本项目研究一个生成模型与搜索相互促进的闭环：
@@ -416,25 +418,25 @@ arm 6: randomized insertion restart
 
 ### Toy setting
 
-- 实验计划：[toy setting/MLP_REWARD_EXPLORATION_PLAN.md](./toy%20setting/MLP_REWARD_EXPLORATION_PLAN.md)
-- 运行说明：[toy setting/README.md](./toy%20setting/README.md)
-- 结果与解释：[toy setting/RESULTS.md](./toy%20setting/RESULTS.md)
-- 配置、代码和输出：[`toy setting/`](./toy%20setting/)
+- 实验计划：[toy setting/MLP_REWARD_EXPLORATION_PLAN.md](https://github.com/Luoyu126/DRL/blob/develop/toy%20setting/MLP_REWARD_EXPLORATION_PLAN.md)
+- 运行说明：[toy setting/README.md](https://github.com/Luoyu126/DRL/blob/develop/toy%20setting/README.md)
+- 结果与解释：[toy setting/RESULTS.md](https://github.com/Luoyu126/DRL/blob/develop/toy%20setting/RESULTS.md)
+- 配置、代码和输出：[`toy setting/`](https://github.com/Luoyu126/DRL/tree/develop/toy%20setting)
 
 该目录包含二维 reward-guided exploration、局部搜索与全局重启、random/UCB、多尺度搜索、reward/score 学习和 replay distillation 等前期实验。
 
 ### 小规模 CPU TSP + MIS 原型
 
-- 运行说明：[TSP+MIS/README.md](./TSP%2BMIS/README.md)
-- 实验设计：[TSP+MIS/DESIGN.md](./TSP%2BMIS/DESIGN.md)
-- 结果与解释：[TSP+MIS/RESULTS.md](./TSP%2BMIS/RESULTS.md)
-- 配置、代码和输出：[`TSP+MIS/`](./TSP%2BMIS/)
+- 运行说明：[TSP+MIS/README.md](https://github.com/Luoyu126/DRL/blob/develop/TSP%2BMIS/README.md)
+- 实验设计：[TSP+MIS/DESIGN.md](https://github.com/Luoyu126/DRL/blob/develop/TSP%2BMIS/DESIGN.md)
+- 结果与解释：[TSP+MIS/RESULTS.md](https://github.com/Luoyu126/DRL/blob/develop/TSP%2BMIS/RESULTS.md)
+- 配置、代码和输出：[`TSP+MIS/`](https://github.com/Luoyu126/DRL/tree/develop/TSP%2BMIS)
 
 该目录是小规模 NumPy/CPU 机制验证，不是正式 DIFUSCO 或大型 GNN 复现。后续 diffusion + TSP 实验应作为新的正式实验线，不应把该原型的模型能力当成神经 TSP 的最终结论。
 
 ### Concept learning
 
-- 入口：[concept learning/README.md](./concept%20learning/README.md)
+- 入口：[concept learning/README.md](https://github.com/Luoyu126/DRL/blob/develop/concept%20learning/README.md)
 
 该目录与本阶段 TSP 计划分开维护。
 
